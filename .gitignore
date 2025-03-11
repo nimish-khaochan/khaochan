@@ -1,0 +1,37 @@
+# 1. Python bytecode & cache
+__pycache__/
+*.py[cod]
+
+# 2. Virtual environments
+venv/
+.venv/
+ENV/
+env/
+venv.bak/
+env.bak/
+
+# 3. Environment / secret files
+*.env
+
+# 4. Local database files
+db.sqlite3
+
+# 5. Mac-specific files
+.DS_Store
+
+# 6. Editor/IDE settings
+.vscode/
+.idea/
+*.iml
+
+# 7. Logs
+*.log
+
+# 8. Media / uploaded files
+media/
+
+# 9. Python egg & distribution info
+*.egg-info/
+*.egg
+dist/
+build/

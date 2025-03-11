@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="mb-4">KhaoChan Headlines</h1>
+  <div class="row">
+    {% for item in news_items %}
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text">{{ item.summary }}</p>
+            <a href="{{ item.source_link }}" target="_blank" class="btn btn-primary">Read More</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No news items available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
