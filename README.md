@@ -11,7 +11,7 @@ KhaoChan is a Django-based web application that provides quick, bite-sized summa
 
 ## Tech Stack
 
-- **Backend:** Python and Django
+- **Backend:** Python, Django
 - **Database:** SQLite for development (upgrade to PostgreSQL in production)
 - **Frontend:** Django Templates with a CSS framework (Bootstrap or Tailwind CSS recommended)
 - **Hosting:** Deployable on low-cost VPS services (e.g., DigitalOcean, Linode, Hetzner)
