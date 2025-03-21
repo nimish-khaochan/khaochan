@@ -5,27 +5,10 @@
   <meta charset="UTF-8" />
   <title>{% block title %}KhaoChan: Thailand News In Short{% endblock %}</title>
 
-  <!-- Viewport for Responsive Design -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="KhaoChan delivers concise, 30-word summaries of Thai news for busy expats and locals. Stay informed with quick and engaging headlines." />
-  <meta name="keywords" content="Thai News, Short News, Thailand, Expats, Headlines, KhaoChan" />
-  <meta name="author" content="KhaoChan Team" />
-  <link rel="canonical" href="http://www.yoursiteurl.com/" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="KhaoChan: Thailand News In Short" />
-  <meta property="og:description" content="Concise Thai news summaries for busy expats and locals." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="http://www.yoursiteurl.com/" />
-  <meta property="og:image" content="{% static 'images/khaochan_logo.png' %}" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="KhaoChan: Thailand News In Short" />
-  <meta name="twitter:description" content="Quick, 30-word summaries of Thai news to keep you informed." />
-  <meta name="twitter:image" content="{% static 'images/khaochan_logo.png' %}" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
+  </style>
 
   <!-- Bootstrap 5 CSS -->
   <link
@@ -34,66 +17,73 @@
   />
 
   <style>
+    /* GLOBAL STYLING */
     body {
       background-color: #0F0F0F;
       color: #6E6E6E;
       margin: 0;
+      font-family: 'Georgia', serif; /* fallback to Georgia */
     }
-    /* Navbar styling */
-    .navbar {
-      background-color: #0F0F0F !important;
+
+    /* FIRST NAVBAR: Logo + User Auth */
+    #topNav {
+      background-color: #0F0F0F;
       border-bottom: 1px solid #2D2A4A;
-      min-height: 60px;
-      padding: 0 !important;
     }
-    .navbar-brand {
-      padding: 0 !important;
-      display: flex;
-      align-items: center;
-    }
-    .navbar-brand img {
-      height: 60px;
+    #topNav .navbar-brand img {
+      height: 140px;      /* Larger logo */
       width: auto;
       object-fit: contain;
     }
-    .nav-link {
+    #topNav .nav-link,
+    #topNav .btn {
+      color: #f2f2f2 !important;
+    }
+    #topNav .nav-link:hover {
+      color: #fff !important;
+    }
+
+    /* SECOND NAVBAR: Category Links */
+    #secondNav {
+      background-color: #1A1A1A;
+      border-bottom: 1px solid #2D2A4A;
+    }
+    #secondNav .nav-link {
       color: #6E6E6E !important;
-      margin-left: 1rem;
+      margin-right: 1rem;
     }
-    .nav-link:hover {
+    #secondNav .nav-link:hover {
       color: #fff !important;
     }
-    /* Button styling */
-    .btn-primary {
-      background-color: #2D2A4A !important;
-      border-color: #2D2A4A !important;
-      color: #fff !important;
-    }
-    .btn-primary:hover {
-      background-color: #3f3b66 !important;
-      border-color: #3f3b66 !important;
-    }
-    .btn-signup {
-      background-color: #6B0705 !important;
-      border-color: #6B0705 !important;
-      color: #fff !important;
-    }
-    .btn-signup:hover {
-      background-color: #7d0a0a !important;
-      border-color: #7d0a0a !important;
-    }
-    /* Cards */
+
+    /* Card styling */
     .card {
       background-color: #1A1A1A;
       border: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .card-title {
-      color: #6B0705 !important;
+      color: #f2f2f2 !important;
+      font-size: 1.2rem;
     }
     .card-text {
       color: #6E6E6E !important;
     }
-    /* Footer */
+
+    .publisher-logo {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+    .icon {
+        width: 60px !important;
+        height: 60px !important;
+        object-fit: contain;
+      }
+
+    /* Footer link color override */
     footer a {
       color: #6E6E6E !important;
       text-decoration: none;
@@ -103,31 +93,34 @@
     }
   </style>
 </head>
+
 <body>
-  <nav class="navbar navbar-expand-lg">
+  <!-- TOP NAVBAR: Logo + Auth Buttons -->
+  <nav id="topNav" class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-        <img src="{% static 'images/khaochan_logo.png' %}" alt="KhaoChan Logo" />
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="{% static 'images/khaochan_logo.png' %}" alt="KhaoChan" />
       </a>
       <button
         class="navbar-toggler"
         type="button"
         data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
+        data-bs-target="#topNavContent"
+        aria-controls="topNavContent"
         aria-expanded="false"
         aria-label="Toggle navigation"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+
+      <div class="collapse navbar-collapse" id="topNavContent">
+        <!-- Right side: user login/logout -->
         <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
             <li class="nav-item">
               <span class="nav-link">{{ user.username }}</span>
             </li>
             <li class="nav-item">
-              <!-- Logout now uses a form to send a POST request -->
               <form method="post" action="{% url 'logout' %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary my-2">Log Out</button>
@@ -138,7 +131,7 @@
               <a class="btn btn-primary my-2" href="{% url 'login' %}">Log in</a>
             </li>
             <li class="nav-item">
-              <a class="btn btn-signup my-2 ms-2" href="{% url 'signup' %}">Sign up</a>
+              <a class="btn btn-danger my-2 ms-2" href="{% url 'signup' %}">Sign up</a>
             </li>
           {% endif %}
         </ul>
@@ -146,12 +139,52 @@
     </div>
   </nav>
 
+  <!-- SECOND NAVBAR: Category Links -->
+  <nav id="secondNav" class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <!-- Toggler for mobile (optional) -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#categoryNav"
+        aria-controls="categoryNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="categoryNav">
+        <ul class="navbar-nav w-100 justify-content-around">
+          <!-- Example categories linking to news_by_category -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'news_by_category' 'alerts' %}">Alerts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'news_by_category' 'local' %}">Local News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'news_by_category' 'culture' %}">Culture</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'news_by_category' 'visas' %}">Visa Regulations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'news_by_category' 'business' %}">Business</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT AREA -->
   <main class="container my-4">
     {% block content %}
     {% endblock %}
   </main>
 
-  <!-- Footer Section -->
+  <!-- FOOTER -->
   <footer class="container text-center" style="border-top: 1px solid #2D2A4A; padding-top: 1rem;">
     <nav>
       <a href="/login/" class="mx-2">Login</a>
@@ -167,6 +200,7 @@
     <p class="mt-3">© 2025 KhaoChan</p>
   </footer>
 
+  <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

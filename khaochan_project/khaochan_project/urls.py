@@ -19,15 +19,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+
 from news.views import (
     home, login_view, newsletters_view, about_view, blog_view,
     publishers_view, help_view, terms_view, privacy_view, sitemap_view,
-    signup_view
+    signup_view, news_by_category
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Home page
     path('', home, name='home'),
+
+    # Category route: e.g. /category/local/ or /category/business/
+    path('category/<str:cat>/', news_by_category, name='news_by_category'),
+
+    # Placeholder routes
     path('login/', login_view, name='login'),
     path('newsletters/', newsletters_view, name='newsletters'),
     path('about/', about_view, name='about'),
@@ -37,6 +45,8 @@ urlpatterns = [
     path('terms/', terms_view, name='terms'),
     path('privacy/', privacy_view, name='privacy'),
     path('sitemap/', sitemap_view, name='sitemap'),
+
+    # Django Auth URLs
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup/', signup_view, name='signup'),
 ]

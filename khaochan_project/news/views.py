@@ -1,10 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.core.paginator import Paginator
+from django.contrib.auth.forms import UserCreationForm
 from .models import NewsItem
 
+
 def home(request):
-    # Fetch the latest 12 news items by date
-    news_items = NewsItem.objects.order_by('-date_published')[:12]
-    return render(request, 'home.html', {'news_items': news_items})
+    # Fetch all news items, newest first
+    all_news = NewsItem.objects.order_by('-date_published')
+
+    # Paginate by 12 items per page
+    paginator = Paginator(all_news, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # If you have top news, you can fetch them here
+    top_news = NewsItem.objects.filter(is_top_news=True).order_by('-date_published')[:5]
+
+    return render(request, 'home.html', {
+        'page_obj': page_obj,
+        'top_news': top_news,
+    })
+
+
+def news_by_category(request, cat):
+    """
+    Displays news items for a specific category.
+    """
+    items = NewsItem.objects.filter(category__iexact=cat).order_by('-date_published')
+    paginator = Paginator(items, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'home.html', {
+        'page_obj': page_obj,
+        'selected_category': cat,
+    })
 
 
 def login_view(request):
@@ -48,7 +79,6 @@ def signup_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Log the user in after successful registration
             login(request, user)
             return redirect('home')
     else:

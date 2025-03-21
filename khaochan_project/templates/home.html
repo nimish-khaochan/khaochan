@@ -1,19 +1,137 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container my-4">
-  <h1 class="mb-4">KhaoChan Headlines</h1>
+<div class="container mt-5">
+
+  <!-- Top News Section (only if top_news is present) -->
+  {% if top_news %}
+    <h2 class="mb-4">Top News</h2>
+    <div class="row mb-5">
+      {% for item in top_news %}
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <!-- Card Header: Publisher Logo + Name -->
+            <div class="card-header d-flex align-items-center">
+              <img
+                src="{% if item.publisher_logo_url %}{{ item.publisher_logo_url }}{% else %}{% static 'images/logos/default-logo.png' %}{% endif %}"
+                alt="Publisher Logo"
+                class="publisher-logo"
+              />
+              <span class="ms-2 fw-bold text-secondary">
+                {{ item.publisher_name|default:'Publisher' }}
+              </span>
+            </div>
+
+            <!-- Article Image -->
+            <img
+              src="{% if item.image_url %}{{ item.image_url }}{% else %}{% static 'images/default-article.png' %}{% endif %}"
+              class="card-img-top article-image"
+              alt="News Image"
+            />
+
+            <!-- Card Body -->
+            <div class="card-body">
+              <h5 class="card-title mb-2">{{ item.title }}</h5>
+              <p class="card-text">{{ item.summary }}</p>
+              <a href="{{ item.source_link }}" target="_blank" class="btn btn-primary">
+                Read More
+              </a>
+            </div>
+
+            <!-- Card Footer: Like, Comment, Share Icons (icons only) -->
+            <div class="card-footer d-flex justify-content-around">
+              <a href="#" class="text-decoration-none d-flex align-items-center" title="Like">
+                <img
+                  src="{% static 'images/icon-like.png' %}"
+                  alt="Like Icon"
+                  class="icon me-1"
+                />
+              </a>
+              <a href="#" class="text-decoration-none d-flex align-items-center" title="Comment">
+                <img
+                  src="{% static 'images/icon-comment.png' %}"
+                  alt="Comment Icon"
+                  class="icon me-1"
+                />
+              </a>
+              <a href="#" class="text-decoration-none d-flex align-items-center" title="Share">
+                <img
+                  src="{% static 'images/icon-share.png' %}"
+                  alt="Share Icon"
+                  class="icon me-1"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Category or Default Heading -->
+  {% if selected_category %}
+    <h2 class="mb-4 text-uppercase">{{ selected_category }}</h2>
+  {% else %}
+    <h2 class="mb-4">KhaoChan Headlines</h2>
+  {% endif %}
+
+  <!-- Main Paginated Feed -->
   <div class="row">
-    {% for item in news_items %}
+    {% for item in page_obj %}
       <div class="col-md-4 mb-3">
         <div class="card h-100">
-          {% if item.image %}
-            <img src="{{ item.image.url }}" class="card-img-top" alt="News Image">
-          {% endif %}
+          <!-- Card Header: Publisher Logo + Name -->
+          <div class="card-header d-flex align-items-center">
+            <img
+              src="{% if item.publisher_logo_url %}{{ item.publisher_logo_url }}{% else %}{% static 'images/logos/default-logo.png' %}{% endif %}"
+              alt="Publisher Logo"
+              class="publisher-logo"
+            />
+            <span class="ms-2 fw-bold text-secondary">
+              {{ item.publisher_name|default:'Publisher' }}
+            </span>
+          </div>
+
+          <!-- Article Image -->
+          <img
+            src="{% if item.image_url %}{{ item.image_url }}{% else %}{% static 'images/default-article.png' %}{% endif %}"
+            class="card-img-top article-image"
+            alt="News Image"
+          />
+
+          <!-- Card Body -->
           <div class="card-body">
-            <h5 class="card-title">{{ item.title }}</h5>
+            <h5 class="card-title mb-2">{{ item.title }}</h5>
             <p class="card-text">{{ item.summary }}</p>
-            <a href="{{ item.source_link }}" target="_blank" class="btn btn-primary">Read More</a>
+            <a href="{{ item.source_link }}" target="_blank" class="btn btn-primary">
+              Read More
+            </a>
+          </div>
+
+          <!-- Card Footer: Like, Comment, Share Icons -->
+          <div class="card-footer d-flex justify-content-around">
+            <a href="#" class="text-decoration-none d-flex align-items-center">
+              <img
+                src="{% static 'images/icon-like.png' %}"
+                alt="Like"
+                class="icon me-1"
+              />
+            </a>
+            <a href="#" class="text-decoration-none d-flex align-items-center">
+              <img
+                src="{% static 'images/icon-comment.png' %}"
+                alt="Comment"
+                class="icon me-1"
+              />
+            </a>
+            <a href="#" class="text-decoration-none d-flex align-items-center">
+              <img
+                src="{% static 'images/icon-share.png' %}"
+                alt="Share"
+                class="icon me-1"
+              />
+            </a>
           </div>
         </div>
       </div>
@@ -21,5 +139,46 @@
       <p>No news items available.</p>
     {% endfor %}
   </div>
+
+  <!-- Pagination Controls -->
+  <nav aria-label="News Pagination">
+    <ul class="pagination justify-content-center mt-4">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+            &laquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&laquo;</span>
+        </li>
+      {% endif %}
+
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <li class="page-item active">
+            <span class="page-link">{{ i }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+            &raquo;
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&raquo;</span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock %}
